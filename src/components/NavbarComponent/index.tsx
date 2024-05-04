@@ -15,8 +15,15 @@ import { useState } from "react";
 import Link from "next/link";
 
 const listLink: { name: string; link: string }[] = [
+  { name: "Home", link: "/" },
   { name: "Products", link: "/products" },
   { name: "Category", link: "/category" },
+  { name: "Places", link: "/place" },
+  { name: "Roles", link: "/roles" },
+  { name: "Users", link: "/users" },
+  { name: "Orders", link: "/orders" },
+  { name: "Operation", link: "/operation" },
+  { name: "Moviments", link: "/moviments" },
 ];
 
 export const NavbarComponent = () => {
@@ -49,12 +56,8 @@ export const NavbarComponent = () => {
         <div className=" h-full w-[250px] flex flex-col gap-2 items-center justify-center">
           {listLink.map((item, index) => {
             return (
-              <ListItem disablePadding>
-                <Link
-                  className="w-full"
-                  href={item.link}
-                  key={item.name + index}
-                >
+              <ListItem key={item.name + index} disablePadding>
+                <Link className="w-full" href={item.link}>
                   <ListItemButton>{item.name}</ListItemButton>
                 </Link>
               </ListItem>

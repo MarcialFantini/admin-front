@@ -1,5 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { baseUrl } from "../../../../vars/baseUrl";
+import {
+  CategoriesResponseInterface,
+  CategoryUpdate,
+} from "../../../../interfaces/categoryInterfaces";
 
 export const createCategory = createAsyncThunk(
   "create-category/admin",
@@ -33,12 +37,32 @@ export const getCategory = createAsyncThunk(
       const response = await fetch(baseUrl + "category/row");
 
       if (response.status !== 200) {
-        thunkApi.rejectWithValue(false);
+        return thunkApi.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as unknown as string[];
+      const data =
+        (await response.json()) as unknown as CategoriesResponseInterface;
 
-      return data || [];
+      return data.data || [];
+    } catch (error) {
+      return thunkApi.rejectWithValue(false);
+    }
+  }
+);
+
+export const deletedCategory = createAsyncThunk(
+  "delete-category/admin",
+  async (id: string, thunkApi) => {
+    try {
+      const responseDeleted = await fetch(baseUrl + "category/delete/" + id, {
+        method: "DELETE",
+      });
+
+      if (responseDeleted.status !== 200) {
+        return thunkApi.rejectWithValue(false);
+      }
+
+      return thunkApi.fulfillWithValue(id);
     } catch (error) {
       return thunkApi.rejectWithValue(false);
     }

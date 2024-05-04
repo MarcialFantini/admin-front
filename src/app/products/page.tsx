@@ -1,17 +1,22 @@
 "use client";
-import { Button, ButtonGroup } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+
+import { Button, ButtonGroup, TextField } from "@mui/material";
+
 import Link from "next/link";
 
-const columns: GridColDef[] = [
-  { field: "col1", headerName: "Id" },
-  { field: "col2", headerName: "Name" },
-  { field: "col3", headerName: "Price" },
-  { field: "col3", headerName: "Category" },
-  { field: "col3", headerName: "Stock" },
-];
+import { TableProducts } from "@/components/TableProducts";
+import { useAppDispatch } from "@/store/hooks";
+import { ChangeEvent, useState } from "react";
+import { getProductsLikeThunk } from "@/store/slice/products/actions";
 
 export default function ProductsPage() {
+  const [search, setSearch] = useState("");
+  const dispatch = useAppDispatch();
+  const handlerChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => setSearch(event.target.value);
+  const handlerSearch = () => dispatch(getProductsLikeThunk(search));
+
   return (
     <div className="flex flex-col gap-4 content-center items-center w-full min-h-[100vh] h-full px-[3%] pt-[100px] pb-4">
       <ButtonGroup className="w-full">
@@ -19,11 +24,17 @@ export default function ProductsPage() {
           <Button>Create product</Button>
         </Link>
       </ButtonGroup>
-      <DataGrid
-        className="min-h-[200px] w-full"
-        columns={columns}
-        rows={[]}
-      ></DataGrid>
+      <div className="flex flex-col w-full">
+        <TextField
+          onChange={handlerChange}
+          value={search}
+          label="Products by name"
+        ></TextField>
+        <Button onClick={handlerSearch} variant="contained">
+          Search
+        </Button>
+      </div>
+      <TableProducts></TableProducts>
     </div>
   );
 }

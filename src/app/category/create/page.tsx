@@ -2,10 +2,12 @@
 import { useAppDispatch } from "@/store/hooks";
 import { createCategory } from "@/store/slice/category/actions";
 import { Button, TextField } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function CreateCategoryPage() {
   const [category, setCategory] = useState("");
+  const router = useRouter();
   const handlerChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -13,9 +15,10 @@ export default function CreateCategoryPage() {
   };
 
   const dispatch = useAppDispatch();
-  const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handlerSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(createCategory(category));
+    await dispatch(createCategory(category));
+    router.push("/category");
   };
 
   return (

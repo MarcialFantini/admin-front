@@ -3,7 +3,7 @@ import {
   initialStateCategory,
   status,
 } from "../../../../interfaces/categoryInterfaces";
-import { createCategory, getCategory } from "./actions";
+import { createCategory, deletedCategory, getCategory } from "./actions";
 
 const initialState: initialStateCategory = {
   categories: [],
@@ -25,6 +25,19 @@ const categorySlice = createSlice({
     builder.addCase(getCategory.fulfilled, (state, action) => {
       state.status = status.normal;
       state.categories = action.payload;
+    });
+
+    builder.addCase(deletedCategory.fulfilled, (state, action) => {
+      console.log(
+        "filter ",
+        state.categories.filter(
+          (categories) => categories.id !== action.payload
+        )
+      );
+      state.status = status.normal;
+      state.categories = state.categories.filter(
+        (categories) => categories.id !== action.payload
+      );
     });
   },
 });
