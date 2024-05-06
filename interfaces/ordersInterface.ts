@@ -8,7 +8,7 @@ export interface OrdersDetiailItem {
 export interface OrdersInterface {
   id: string;
   client_id: string;
-  status: string;
+  operation_id: string;
 }
 
 export interface OrdersCar {
@@ -25,7 +25,7 @@ export interface OrdersCarName {
 export interface InitialStateOrderInterface {
   list: OrdersInterface[];
   newOrder: OrdersCarName[];
-  orderSelected: null | OrderAndDetail;
+  orderSelected: OrderAndDetail;
 }
 
 export interface CreateOrderThunkReques {
@@ -37,7 +37,7 @@ export interface CreateOrderThunkReques {
 export interface OrderResponse {
   id: string;
   client_id: string;
-  status: string;
+  operation_id: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,7 +57,7 @@ export interface GetOrderResponseDetails {
 export interface OrderAndDetail {
   id: string;
   client_id: string;
-  status: string;
+  operation_id: string;
   place: string;
 
   details: OrderDetail[];
@@ -70,4 +70,4 @@ export interface OrderDetail {
   price: number;
 }
 
-export const normalIdUser = "e5dfa6c3-8c20-4ce9-86cd-eca33fdb9850";
+export const normalIdUser = "a8407ce9-b923-4528-abe6-b8adc1251306";

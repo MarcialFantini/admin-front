@@ -49,7 +49,10 @@ export const NavbarComponent = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             News
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Link href={"/login"}>
+            {" "}
+            <Button color="inherit">Login</Button>
+          </Link>
         </Toolbar>
       </AppBar>
       <Drawer onClick={handlerToggleOpen} open={open} anchor="left">

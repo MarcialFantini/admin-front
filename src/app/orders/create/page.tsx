@@ -36,7 +36,7 @@ export default function CreateOrderPage() {
     const ordersDeatailToCreate: OrdersCar[] = resume.map((item) => {
       return { product_id: item.product_id, amount: item.amount };
     });
-
+    console.log(normalIdUser);
     dispatch(
       createOrderThunk({
         idUser: normalIdUser,

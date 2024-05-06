@@ -14,7 +14,11 @@ export const createOrderThunk = createAsyncThunk(
       const newDetails = body.orders.map((item) => {
         return { ...item, place_id: body.place_id };
       });
-      const newBody = { idUser: body.idUser, orders: newDetails };
+      const newBody = {
+        idUser: body.idUser,
+        place_id: body.place_id,
+        orders: newDetails,
+      };
 
       const bodyStringify = await JSON.stringify(newBody);
       const response = await fetch(baseUrl + "orders/create", {
@@ -84,7 +88,23 @@ export const updateOrderPlaceThunk = createAsyncThunk(
         return thunk.rejectWithValue(false);
       }
 
-      return thunk.fulfillWithValue(true);
+      return thunk.fulfillWithValue(body.place_id);
+    } catch (error) {
+      return thunk.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteOrderThunk = createAsyncThunk(
+  "delete-order/admin",
+  async (id: string, thunk) => {
+    try {
+      const response = await intense.delete("orders/delete");
+      if (response.status !== 200) {
+        return thunk.rejectWithValue(false);
+      }
+
+      return thunk.fulfillWithValue(id);
     } catch (error) {
       return thunk.rejectWithValue(error);
     }

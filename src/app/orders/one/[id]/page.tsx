@@ -4,6 +4,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
 import { OrderDetail } from "../../../../../interfaces/ordersInterface";
 import {
+  deleteOrderThunk,
   getOrderSelectThunk,
   updateOrderPlaceThunk,
 } from "@/store/slice/orders/actions";
@@ -21,8 +22,15 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getPlaceThunk } from "@/store/slice/place/actions";
+import {
+  getOperations,
+  setOperationsOrder,
+} from "@/store/slice/operations/actions";
+import { useRouter } from "next/navigation";
 export default function OrderOnePage({ params }: { params: { id: string } }) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const operationsRow = useAppSelector((state) => state.operation.list);
   const orderSelected = useAppSelector((item) => item.orders.orderSelected);
   const placeList = useAppSelector((item) => item.place.list);
   const [placeSelected, setPlaceSelected] = useState("");
@@ -34,7 +42,23 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
     dispatch(
       updateOrderPlaceThunk({ order_id: params.id, place_id: placeSelected })
     );
+  const [operation, setOperation] = useState(orderSelected.operation_id);
 
+  const handlerSetOperation = (event: SelectChangeEvent<string>) =>
+    setOperation(event.target.value);
+
+  const dispatchChangeOperation = () => {
+    dispatch(
+      setOperationsOrder({ idOrder: params.id, idOperation: operation })
+    );
+  };
+
+  const deleteOrderHandler = () => {
+    dispatch(deleteOrderThunk(params.id));
+    router.push("/orders");
+  };
+
+  const getOperationsList = () => dispatch(getOperations());
   const columnsOrderDetail = useMemo<GridColDef<OrderDetail>[]>(
     () => [
       { headerName: "Id Detail", field: "id" },
@@ -48,6 +72,7 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
   useEffect(() => {
     dispatch(getOrderSelectThunk(params.id));
     dispatch(getPlaceThunk(""));
+    getOperationsList();
   }, []);
 
   return (
@@ -57,7 +82,7 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
           <p className=" text-white text-2xl">
             Operation:{" "}
             <span className=" text-2xl text-green-300">
-              {orderSelected?.status}
+              {orderSelected.operation_id}
             </span>
           </p>
           <p className="  text-2xl text-white">
@@ -79,22 +104,24 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
               aria-controls="panel1-content"
               id="panel1-header"
             >
-              Change Process
+              Change Operation
             </AccordionSummary>
             <AccordionDetails>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Process</InputLabel>
+                <InputLabel id="demo-simple-select-label">Operation</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Process"
+                  onChange={handlerSetOperation}
+                  value={operation}
                 >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  {operationsRow.map((item) => {
+                    return <MenuItem value={item.id}>{item.name}</MenuItem>;
+                  })}
                 </Select>
               </FormControl>
-              <Button> Confirm </Button>
+              <Button onClick={dispatchChangeOperation}> Confirm </Button>
             </AccordionDetails>
           </Accordion>
           <Accordion
@@ -145,8 +172,7 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
                 aria-label="Basic button group"
                 variant="outlined"
               >
-                <Button> Delete Order </Button>
-                <Button>Delete Order whit return the product</Button>
+                <Button onClick={deleteOrderHandler}> Delete Order </Button>
               </ButtonGroup>
             </AccordionDetails>
           </Accordion>

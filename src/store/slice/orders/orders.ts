@@ -5,14 +5,24 @@ import {
 } from "../../../../interfaces/ordersInterface";
 import {
   createOrderThunk,
+  deleteOrderThunk,
   getOrderSelectThunk,
   getOrderThunk,
+  updateOrderPlaceThunk,
 } from "./actions";
+import { setOperationsOrder } from "../operations/actions";
 
 const initialState: InitialStateOrderInterface = {
   newOrder: [],
   list: [],
-  orderSelected: null,
+  orderSelected: {
+    id: "",
+    client_id: "",
+    operation_id: "",
+    place: "",
+
+    details: [],
+  },
 };
 
 export const OrdersSlice = createSlice({
@@ -44,6 +54,18 @@ export const OrdersSlice = createSlice({
 
     builder.addCase(getOrderSelectThunk.fulfilled, (state, action) => {
       state.orderSelected = action.payload;
+    });
+
+    builder.addCase(setOperationsOrder.fulfilled, (state, action) => {
+      state.orderSelected.operation_id = action.payload.idOperation;
+    });
+
+    builder.addCase(updateOrderPlaceThunk.fulfilled, (state, action) => {
+      state.orderSelected.place = action.payload;
+    });
+
+    builder.addCase(deleteOrderThunk.fulfilled, (state, action) => {
+      state.list = state.list.filter((item) => item.id !== action.payload);
     });
   },
 });

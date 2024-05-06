@@ -60,3 +60,20 @@ export const deleteOperations = createAsyncThunk(
     }
   }
 );
+
+export const setOperationsOrder = createAsyncThunk(
+  "set-operation-admin",
+  async (body: { idOperation: string; idOrder: string }, thunkApi) => {
+    try {
+      const response = await intense.patch("orders/operation/change", body);
+
+      if (response.status !== 200) {
+        return thunkApi.rejectWithValue(false);
+      }
+
+      return thunkApi.fulfillWithValue(body);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
