@@ -27,4 +27,16 @@ export interface getUserResponse {
 
 export interface UserStateReducer {
   list: UserItem[];
+  isLogin: boolean;
+  token: string;
+}
+
+export interface ResponseDataLogin {
+  data: DataLogin;
+  message: string;
+  code: number;
+}
+
+export interface DataLogin {
+  token: string;
 }

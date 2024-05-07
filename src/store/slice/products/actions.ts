@@ -4,18 +4,19 @@ import {
   ProductItemList,
   ProductResponseGetInterface,
 } from "../../../../interfaces/productInterfaces";
-import { baseUrl } from "../../../../vars/baseUrl";
+
+import { intense } from "@/utils/intanseAxios";
 
 export const createProductThunk = createAsyncThunk(
   "create-product/thunk",
-  async (product: ProductFormInterface, thunk) => {
+  async (
+    { product, token }: { product: ProductFormInterface; token: string },
+    thunk
+  ) => {
     try {
-      const body = JSON.stringify(product);
-      const response = await fetch(baseUrl + "products/create", {
-        method: "POST",
-        body,
+      const response = await intense.post("products/create", product, {
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -23,7 +24,7 @@ export const createProductThunk = createAsyncThunk(
         return thunk.rejectWithValue(false);
       }
 
-      const productCreated = (await response.json()) as ProductItemList;
+      const productCreated = response.data as ProductItemList;
 
       return thunk.fulfillWithValue(productCreated);
     } catch (error) {
@@ -34,16 +35,23 @@ export const createProductThunk = createAsyncThunk(
 
 export const getProductsThunk = createAsyncThunk(
   "get-product/thunk",
-  async (option: { page: number; offset: number }, thunk) => {
+  async (option: { page: number; offset: number; token: string }, thunk) => {
     try {
-      const response = await fetch(
-        baseUrl + `products/page/${option.page}/offset/${option.offset}`
+      console.log({ Authorization: `Bearer ${option.token}` });
+      const response = await intense(
+        `products/page/${option.page}/offset/${option.offset}`,
+        {
+          headers: {
+            Authorization: `Bearer ${option.token}`,
+          },
+        }
       );
+      console.log(response);
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
 
-      const products = (await response.json()) as ProductResponseGetInterface;
+      const products = response.data as ProductResponseGetInterface;
 
       return thunk.fulfillWithValue(products.data);
     } catch (error) {
@@ -54,10 +62,12 @@ export const getProductsThunk = createAsyncThunk(
 
 export const delProductsThunk = createAsyncThunk(
   "delete-product/thunk",
-  async (idProduct: string, thunk) => {
+  async ({ token, idProduct }: { idProduct: string; token: string }, thunk) => {
     try {
-      const response = await fetch(baseUrl + `products/delete/${idProduct}`, {
-        method: "delete",
+      const response = await intense.delete(`products/delete/${idProduct}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.status !== 200) {
@@ -73,15 +83,19 @@ export const delProductsThunk = createAsyncThunk(
 
 export const getProductsLikeThunk = createAsyncThunk(
   "get-products-like/admin",
-  async (name: string, thunk) => {
+  async ({ name, token }: { token: string; name: string }, thunk) => {
     try {
-      const response = await fetch(baseUrl + "products/like/" + name);
+      const response = await intense("products/like/" + name, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
 
-      const products = (await response.json()) as ProductResponseGetInterface;
+      const products = response.data as ProductResponseGetInterface;
 
       return thunk.fulfillWithValue(products.data);
     } catch (error) {

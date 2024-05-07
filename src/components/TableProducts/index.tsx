@@ -14,10 +14,11 @@ import { useEffect, useMemo } from "react";
 import { ProductItemList } from "../../../interfaces/productInterfaces";
 
 export const TableProducts = () => {
+  const token = useAppSelector((state) => state.users.token);
   const dispatch = useAppDispatch();
   const products = useAppSelector((state) => state.products.list);
   const handlerDelProduct = (id: string) => () => {
-    dispatch(delProductsThunk(id));
+    dispatch(delProductsThunk({ idProduct: id, token }));
   };
   const columns = useMemo<GridColDef<ProductItemList>[]>(
     () => [
@@ -45,7 +46,7 @@ export const TableProducts = () => {
   );
 
   useEffect(() => {
-    dispatch(getProductsThunk({ offset: 20, page: 0 }));
+    dispatch(getProductsThunk({ offset: 20, page: 0, token }));
   }, []);
   return (
     <DataGrid

@@ -13,8 +13,10 @@ import {
 
 export default function UsersPage() {
   const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.users.token);
   const users = useAppSelector((state) => state.users.list);
-  const deleteUser = (id: string) => () => dispatch(deleteUsersThunk(id));
+  const deleteUser = (id: string, tokenParam: string) => () =>
+    dispatch(deleteUsersThunk({ id, token: tokenParam }));
   const columns = useMemo<GridColDef<UserItem>[]>(
     () => [
       { field: "id", headerName: "Id" },
@@ -28,7 +30,7 @@ export default function UsersPage() {
         getActions(params) {
           return [
             <GridActionsCellItem
-              onClick={deleteUser(params.row.id)}
+              onClick={deleteUser(params.row.id, token)}
               icon={<Delete></Delete>}
               label="Delete"
             />,
@@ -40,8 +42,8 @@ export default function UsersPage() {
   );
 
   useEffect(() => {
-    dispatch(GetUsersPageThunk({ page: 0, offset: 20 }));
-  }, []);
+    dispatch(GetUsersPageThunk({ page: 0, offset: 20, token }));
+  }, [token]);
 
   return (
     <div className="w-[95%] m-auto min-h-[100vh] pt-[100px] flex flex-col gap-4">

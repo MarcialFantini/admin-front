@@ -4,9 +4,13 @@ import { ResponseRowMovements } from "../../../../interfaces/movimentsInterfaces
 
 export const movementsRowGet = createAsyncThunk(
   "movements-get/admin",
-  async (_none, thunk) => {
+  async (token: string, thunk) => {
     try {
-      const response = await intense("movements/row");
+      const response = await intense("movements/row", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);

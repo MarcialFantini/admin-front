@@ -14,11 +14,13 @@ import { delRoleThunk, getRoleThunk } from "@/store/slice/roles/actions";
 import { useRouter } from "next/navigation";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 export default function RolePage() {
+  const token = useAppSelector((state) => state.users.token);
+
   const dispatch = useAppDispatch();
-  const deleteRoleHandler = (id: string) => () => dispatch(delRoleThunk(id));
+  const deleteRoleHandler = (id: string) => () =>
+    dispatch(delRoleThunk({ id, token }));
   const router = useRouter();
   const pushRouter = (url: string) => () => router.push(url);
-
   const roles = useAppSelector((state) => state.roles.list);
   const columns = useMemo<GridColDef<RoleItemInterface>[]>(
     () => [
@@ -46,7 +48,7 @@ export default function RolePage() {
   );
 
   useEffect(() => {
-    dispatch(getRoleThunk(1));
+    dispatch(getRoleThunk(token));
   }, []);
 
   return (

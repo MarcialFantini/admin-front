@@ -25,7 +25,7 @@ export default function CreatePage() {
     role_id: "",
   });
   const roles = useAppSelector((state) => state.roles.list);
-
+  const token = useAppSelector((state) => state.users.token);
   const handlerChange = (
     event:
       | SelectChangeEvent<string>
@@ -36,13 +36,13 @@ export default function CreatePage() {
 
   const handlerCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await dispatch(CreateUserThunk(form));
+    await dispatch(CreateUserThunk({ form, token }));
 
     router.push("/users");
   };
 
   useEffect(() => {
-    dispatch(getRoleThunk(0));
+    dispatch(getRoleThunk(token));
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 "use client";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createPlaceThunk } from "@/store/slice/place/actions";
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 export default function CreatePage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const token = useAppSelector((state) => state.users.token);
   const [place, setPlace] = useState("");
   const handlerPlaceChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -17,7 +18,7 @@ export default function CreatePage() {
   };
   const handlerCreatePlace = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await dispatch(createPlaceThunk(place));
+    await dispatch(createPlaceThunk({ name: place, token }));
     router.push("/place");
   };
 

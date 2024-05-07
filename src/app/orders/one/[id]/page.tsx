@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 export default function OrderOnePage({ params }: { params: { id: string } }) {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const token = useAppSelector((state) => state.users.token);
   const operationsRow = useAppSelector((state) => state.operation.list);
   const orderSelected = useAppSelector((item) => item.orders.orderSelected);
   const placeList = useAppSelector((item) => item.place.list);
@@ -40,8 +41,12 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
     setPlaceSelected(event.target.value);
   const handlerUpdatePlaceOrder = () =>
     dispatch(
-      updateOrderPlaceThunk({ order_id: params.id, place_id: placeSelected })
+      updateOrderPlaceThunk({
+        body: { order_id: params.id, place_id: placeSelected },
+        token,
+      })
     );
+
   const [operation, setOperation] = useState(orderSelected.operation_id);
 
   const handlerSetOperation = (event: SelectChangeEvent<string>) =>
@@ -49,16 +54,19 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
 
   const dispatchChangeOperation = () => {
     dispatch(
-      setOperationsOrder({ idOrder: params.id, idOperation: operation })
+      setOperationsOrder({
+        body: { idOrder: params.id, idOperation: operation },
+        token,
+      })
     );
   };
 
   const deleteOrderHandler = () => {
-    dispatch(deleteOrderThunk(params.id));
+    dispatch(deleteOrderThunk({ id: params.id, token }));
     router.push("/orders");
   };
 
-  const getOperationsList = () => dispatch(getOperations());
+  const getOperationsList = () => dispatch(getOperations(token));
   const columnsOrderDetail = useMemo<GridColDef<OrderDetail>[]>(
     () => [
       { headerName: "Id Detail", field: "id" },
@@ -70,7 +78,7 @@ export default function OrderOnePage({ params }: { params: { id: string } }) {
   );
 
   useEffect(() => {
-    dispatch(getOrderSelectThunk(params.id));
+    dispatch(getOrderSelectThunk({ idOrder: params.id, token }));
     dispatch(getPlaceThunk(""));
     getOperationsList();
   }, []);

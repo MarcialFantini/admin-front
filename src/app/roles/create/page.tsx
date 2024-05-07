@@ -1,5 +1,5 @@
 "use client";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createRolesThunk } from "@/store/slice/roles/actions";
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -7,6 +7,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function RolesCreatePage() {
   const [role, setRole] = useState("");
+  const token = useAppSelector((state) => state.users.token);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function RolesCreatePage() {
 
   const handlerDispatchForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await dispatch(createRolesThunk(role));
+    await dispatch(createRolesThunk({ name: role, token }));
     router.push("/roles");
   };
 

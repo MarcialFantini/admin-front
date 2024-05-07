@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { baseUrl } from "../../../../vars/baseUrl";
+
 import {
   GetRolesResponse,
   responseCategoryNormal,
@@ -7,25 +7,27 @@ import {
   RolesResponseCreateInterface,
   rolesSectionsInterface,
 } from "../../../../interfaces/rolesInterfaces";
+import { intense } from "@/utils/intanseAxios";
 
 export const createRolesThunk = createAsyncThunk(
   "create-role/admin",
-  async (name: string, thunk) => {
+  async ({ name, token }: { name: string; token: string }, thunk) => {
     try {
-      const body = JSON.stringify({ name });
-      const response = await fetch(baseUrl + "roles/create", {
-        method: "POST",
-        body,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await intense.post(
+        "roles/create",
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status !== 201) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as RolesResponseCreateInterface;
+      const data = response.data as RolesResponseCreateInterface;
 
       return thunk.fulfillWithValue(data.data);
     } catch (error) {
@@ -36,10 +38,12 @@ export const createRolesThunk = createAsyncThunk(
 
 export const delRoleThunk = createAsyncThunk(
   "delete-role/admin",
-  async (id: string, thunk) => {
+  async ({ id, token }: { id: string; token: string }, thunk) => {
     try {
-      const response = await fetch(baseUrl + "roles/delete/" + id, {
-        method: "delete",
+      const response = await intense.delete("roles/delete/" + id, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.status !== 200) {
@@ -54,13 +58,17 @@ export const delRoleThunk = createAsyncThunk(
 );
 export const getRoleThunk = createAsyncThunk(
   "get-roles/admin",
-  async (num: number, thunk) => {
+  async (token: string, thunk) => {
     try {
-      const response = await fetch(baseUrl + "roles/row");
+      const response = await intense("roles/row", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
-      const data = (await response.json()) as GetRolesResponse;
+      const data = response.data as GetRolesResponse;
 
       return thunk.fulfillWithValue(data);
     } catch (error) {
@@ -71,15 +79,19 @@ export const getRoleThunk = createAsyncThunk(
 
 export const getAllSections = createAsyncThunk(
   "get-all-sections/admin",
-  async (_name, thunk) => {
+  async (token: string, thunk) => {
     try {
-      const response = await fetch(baseUrl + "/roles/sections/all");
+      const response = await intense("/roles/sections/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as responseCategoryNormal;
+      const data = response.data as responseCategoryNormal;
 
       return thunk.fulfillWithValue(data.data);
     } catch (error) {
@@ -90,23 +102,30 @@ export const getAllSections = createAsyncThunk(
 
 export const createSectionRole = createAsyncThunk(
   "create-sections-role/admin",
-  async (roleSectionCreate: rolesSectionsInterface, thunk) => {
+  async (
+    {
+      token,
+      roleSectionCreate,
+    }: { roleSectionCreate: rolesSectionsInterface; token: string },
+    thunk
+  ) => {
     try {
-      const body = await JSON.stringify(roleSectionCreate);
+      const response = await intense.post(
+        "/roles/sections/create",
 
-      const response = await fetch(baseUrl + "/roles/sections/create", {
-        method: "post",
-        body,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+        roleSectionCreate,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status !== 201) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as responseCategoryNormal;
+      const data = response.data as responseCategoryNormal;
 
       return thunk.fulfillWithValue(data.data);
     } catch (error) {
@@ -117,17 +136,19 @@ export const createSectionRole = createAsyncThunk(
 
 export const getAllSectionsOffRole = createAsyncThunk(
   "get-all-sections-off-role/admin",
-  async (idRole: string, thunk) => {
+  async ({ idRole, token }: { idRole: string; token: string }, thunk) => {
     try {
-      const response = await fetch(
-        baseUrl + "/roles/sections/sections/" + idRole
-      );
+      const response = await intense("/roles/sections/sections/" + idRole, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as responseRolesSections;
+      const data = response.data as responseRolesSections;
 
       return thunk.fulfillWithValue(data.data);
     } catch (error) {
@@ -138,18 +159,22 @@ export const getAllSectionsOffRole = createAsyncThunk(
 
 export const deleteSectionsOffRole = createAsyncThunk(
   "delete-sections-off-role/admin",
-  async (idRole: string, thunk) => {
+  async ({ idRole, token }: { idRole: string; token: string }, thunk) => {
     try {
-      const response = await fetch(
-        baseUrl + "/roles/sections/delete/" + idRole,
-        { method: "delete" }
+      const response = await intense.delete(
+        "/roles/sections/delete/" + idRole,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as responseRolesSections;
+      const data = response.data as responseRolesSections;
 
       return thunk.fulfillWithValue(data.data);
     } catch (error) {

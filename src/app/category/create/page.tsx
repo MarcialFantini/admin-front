@@ -1,5 +1,5 @@
 "use client";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createCategory } from "@/store/slice/category/actions";
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -13,11 +13,11 @@ export default function CreateCategoryPage() {
   ) => {
     setCategory(event.target.value);
   };
-
+  const token = useAppSelector((item) => item.users.token);
   const dispatch = useAppDispatch();
   const handlerSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await dispatch(createCategory(category));
+    await dispatch(createCategory({ token, name: category }));
     router.push("/category");
   };
 

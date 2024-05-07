@@ -1,7 +1,6 @@
 "use client";
 import {
   AppBar,
-  Box,
   Button,
   Drawer,
   IconButton,
@@ -23,7 +22,7 @@ const listLink: { name: string; link: string }[] = [
   { name: "Users", link: "/users" },
   { name: "Orders", link: "/orders" },
   { name: "Operation", link: "/operation" },
-  { name: "Moviments", link: "/moviments" },
+  // { name: "Moviments", link: "/moviments" },
 ];
 
 export const NavbarComponent = () => {

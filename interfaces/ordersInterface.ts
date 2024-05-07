@@ -29,7 +29,6 @@ export interface InitialStateOrderInterface {
 }
 
 export interface CreateOrderThunkReques {
-  idUser: string;
   orders: OrdersCar[];
   place_id: string;
 }
@@ -70,4 +69,4 @@ export interface OrderDetail {
   price: number;
 }
 
-export const normalIdUser = "a8407ce9-b923-4528-abe6-b8adc1251306";
+export const normalIdUser = "472015e7-e97e-41b8-a40f-3549ad2896d4";

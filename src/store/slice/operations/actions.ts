@@ -7,11 +7,19 @@ import {
 
 export const createOperation = createAsyncThunk(
   "create-operation-admin",
-  async (body: { name: string }, thunkApi) => {
+  async (
+    { body, token }: { body: { name: string }; token: string },
+    thunkApi
+  ) => {
     try {
       const newOperation = await intense.post<OperationCreate>(
         "operations/create",
-        body
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (newOperation.status !== 201) {
@@ -29,9 +37,13 @@ export const createOperation = createAsyncThunk(
 
 export const getOperations = createAsyncThunk(
   "get-operations-admin",
-  async (_hola, thunk) => {
+  async (token: string, thunk) => {
     try {
-      const response = await intense.get<OperationGet>("operations/page");
+      const response = await intense.get<OperationGet>("operations/page", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       console.log(response.data);
       if (response.status !== 200) {
@@ -47,9 +59,13 @@ export const getOperations = createAsyncThunk(
 
 export const deleteOperations = createAsyncThunk(
   "delete-operations-admin",
-  async (id: string, thunk) => {
+  async ({ id, token }: { id: string; token: string }, thunk) => {
     try {
-      const response = await intense.delete("operations/delete/" + id);
+      const response = await intense.delete("operations/delete/" + id, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
@@ -63,9 +79,19 @@ export const deleteOperations = createAsyncThunk(
 
 export const setOperationsOrder = createAsyncThunk(
   "set-operation-admin",
-  async (body: { idOperation: string; idOrder: string }, thunkApi) => {
+  async (
+    {
+      body,
+      token,
+    }: { body: { idOperation: string; idOrder: string }; token: string },
+    thunkApi
+  ) => {
     try {
-      const response = await intense.patch("orders/operation/change", body);
+      const response = await intense.patch("orders/operation/change", body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunkApi.rejectWithValue(false);

@@ -7,9 +7,9 @@ import { Movements } from "../../../interfaces/movimentsInterfaces";
 
 export default function MovimentsPage() {
   const dispatch = useAppDispatch();
-
+  const token = useAppSelector((item) => item.users.token);
   const rows = useAppSelector((state) => state.movements.list);
-  const handlerRefresh = () => dispatch(movementsRowGet());
+  const handlerRefresh = () => dispatch(movementsRowGet(token));
 
   const columns = useMemo<GridColDef<Movements>[]>(
     () => [

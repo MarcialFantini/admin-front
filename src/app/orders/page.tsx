@@ -16,6 +16,7 @@ import { getOrderThunk } from "@/store/slice/orders/actions";
 import { useRouter } from "next/navigation";
 
 export default function OrdersPage() {
+  const token = useAppSelector((state) => state.users.token);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const row = useAppSelector((state) => state.orders.list);
@@ -59,7 +60,7 @@ export default function OrdersPage() {
   );
 
   useEffect(() => {
-    dispatch(getOrderThunk({ page: 0, limit: 20 }));
+    dispatch(getOrderThunk({ page: 0, limit: 20, token }));
   }, []);
 
   return (

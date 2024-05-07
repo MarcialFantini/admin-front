@@ -4,29 +4,28 @@ import {
   GetOrderResponseDetails,
   GetOrdersThunkResponse,
 } from "../../../../interfaces/ordersInterface";
-import { baseUrl } from "../../../../vars/baseUrl";
+
 import { intense } from "@/utils/intanseAxios";
 
 export const createOrderThunk = createAsyncThunk(
   "create-order/admin",
-  async (body: CreateOrderThunkReques, thunkApi) => {
+  async (
+    { body, token }: { body: CreateOrderThunkReques; token: string },
+    thunkApi
+  ) => {
     try {
       const newDetails = body.orders.map((item) => {
         return { ...item, place_id: body.place_id };
       });
       const newBody = {
-        idUser: body.idUser,
         place_id: body.place_id,
         orders: newDetails,
       };
 
-      const bodyStringify = await JSON.stringify(newBody);
-      const response = await fetch(baseUrl + "orders/create", {
-        body: bodyStringify,
+      const response = await intense.post("orders/create", newBody, {
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        method: "post",
       });
 
       if (response.status !== 201) {
@@ -42,16 +41,21 @@ export const createOrderThunk = createAsyncThunk(
 
 export const getOrderThunk = createAsyncThunk(
   "get-order/admin",
-  async ({ page, limit }: { page: number; limit: number }, thunkApi) => {
+  async (
+    { page, limit, token }: { page: number; limit: number; token: string },
+    thunkApi
+  ) => {
     try {
-      const response = await fetch(
-        baseUrl + `orders/page/${page}/limit/${limit}`
-      );
+      const response = await intense(`orders/page/${page}/limit/${limit}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunkApi.rejectWithValue(response);
       }
-      const data = (await response.json()) as GetOrdersThunkResponse;
+      const data = response.data as GetOrdersThunkResponse;
       return thunkApi.fulfillWithValue(data.data);
     } catch (error) {
       return thunkApi.rejectWithValue(error);
@@ -61,15 +65,19 @@ export const getOrderThunk = createAsyncThunk(
 
 export const getOrderSelectThunk = createAsyncThunk(
   "get-order-details/admin",
-  async (idOrder: string, thunkApi) => {
+  async ({ idOrder, token }: { idOrder: string; token: string }, thunkApi) => {
     try {
-      const response = await fetch(baseUrl + "orders/one/" + idOrder);
+      const response = await intense("orders/one/" + idOrder, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunkApi.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as GetOrderResponseDetails;
+      const data = response.data as GetOrderResponseDetails;
 
       return thunkApi.fulfillWithValue(data.data);
     } catch (error) {
@@ -80,9 +88,19 @@ export const getOrderSelectThunk = createAsyncThunk(
 
 export const updateOrderPlaceThunk = createAsyncThunk(
   "update-order-place",
-  async (body: { order_id: string; place_id: string }, thunk) => {
+  async (
+    {
+      body,
+      token,
+    }: { body: { order_id: string; place_id: string }; token: string },
+    thunk
+  ) => {
     try {
-      const response = await intense.patch("orders/place/update", body);
+      const response = await intense.patch("orders/place/update", body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
@@ -97,9 +115,13 @@ export const updateOrderPlaceThunk = createAsyncThunk(
 
 export const deleteOrderThunk = createAsyncThunk(
   "delete-order/admin",
-  async (id: string, thunk) => {
+  async ({ id, token }: { id: string; token: string }, thunk) => {
     try {
-      const response = await intense.delete("orders/delete");
+      const response = await intense.delete("orders/delete", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }

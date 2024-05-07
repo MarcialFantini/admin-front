@@ -6,12 +6,7 @@ import {
   getOperations,
 } from "@/store/slice/operations/actions";
 import { Button, Dialog, DialogTitle, TextField } from "@mui/material";
-import {
-  DataGrid,
-  GridActionsCell,
-  GridActionsCellItem,
-  GridColDef,
-} from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import { Operation } from "../../../interfaces/operationInterfaces";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,7 +14,7 @@ export default function OperationsPage() {
   const [isCreate, setIsCreate] = useState(false);
   const [name, setName] = useState("");
   const toggleCreate = () => setIsCreate(!isCreate);
-
+  const token = useAppSelector((item) => item.users.token);
   const dispatch = useAppDispatch();
   const handlerChangeName = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,11 +23,11 @@ export default function OperationsPage() {
   };
   const handlerCreateOperation = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(createOperation({ name }));
+    dispatch(createOperation({ body: { name }, token }));
     toggleCreate();
   };
   const deleteHandler = (idOperation: string) => () =>
-    dispatch(deleteOperations(idOperation));
+    dispatch(deleteOperations({ id: idOperation, token }));
   const rows = useAppSelector((state) => state.operation.list);
 
   const columns = useMemo<GridColDef<Operation>[]>(
@@ -58,7 +53,7 @@ export default function OperationsPage() {
   );
 
   useEffect(() => {
-    dispatch(getOperations());
+    dispatch(getOperations(token));
   }, []);
 
   return (

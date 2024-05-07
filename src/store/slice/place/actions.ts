@@ -1,29 +1,30 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { baseUrl } from "../../../../vars/baseUrl";
+
 import {
   PlaceItemInterface,
   responsePlaceGet,
 } from "../../../../interfaces/placeInterfaces";
+import { intense } from "@/utils/intanseAxios";
 
 export const createPlaceThunk = createAsyncThunk(
   "create-place/admin",
-  async (name: string, thunk) => {
+  async ({ token, name }: { token: string; name: string }, thunk) => {
     try {
-      const body = JSON.stringify({ name });
-
-      const response = await fetch(baseUrl + "place/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      });
+      const response = await intense.post(
+        "place/create",
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status !== 201) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as PlaceItemInterface;
+      const data = response.data as PlaceItemInterface;
 
       return thunk.fulfillWithValue(data);
     } catch (error) {
@@ -34,14 +35,18 @@ export const createPlaceThunk = createAsyncThunk(
 
 export const getPlaceThunk = createAsyncThunk(
   "get-place/admin",
-  async (_text: string, thunk) => {
+  async (token: string, thunk) => {
     try {
-      const response = await fetch(baseUrl + "place/rows");
+      const response = await intense("place/rows", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as responsePlaceGet;
+      const data = response.data as responsePlaceGet;
 
       return thunk.fulfillWithValue(data.data);
     } catch (error) {
@@ -52,10 +57,12 @@ export const getPlaceThunk = createAsyncThunk(
 
 export const deletePlaceThunk = createAsyncThunk(
   "delete-place/admin",
-  async (id: string, thunk) => {
+  async ({ id, token }: { id: string; token: string }, thunk) => {
     try {
-      const response = await fetch(baseUrl + "place/delete/" + id, {
-        method: "DELETE",
+      const response = await intense.delete("place/delete/" + id, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.status !== 200) {

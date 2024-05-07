@@ -4,9 +4,10 @@ import {
   CreateUserThunk,
   deleteUsersThunk,
   GetUsersPageThunk,
+  logInUserThunk,
 } from "./actions";
 
-const initialState: UserStateReducer = { list: [] };
+const initialState: UserStateReducer = { list: [], isLogin: false, token: "" };
 
 const usersSlice = createSlice({
   name: "users",
@@ -23,6 +24,11 @@ const usersSlice = createSlice({
 
     builder.addCase(deleteUsersThunk.fulfilled, (state, action) => {
       state.list = state.list.filter((item) => item.id !== action.payload);
+    });
+
+    builder.addCase(logInUserThunk.fulfilled, (state, action) => {
+      state.isLogin = true;
+      state.token = action.payload;
     });
   },
 });

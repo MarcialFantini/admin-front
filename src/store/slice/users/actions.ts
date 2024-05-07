@@ -2,27 +2,26 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   CreateUserResponse,
   getUserResponse,
+  ResponseDataLogin,
   UserForm,
 } from "../../../../interfaces/usersInterfaces";
-import { baseUrl } from "../../../../vars/baseUrl";
+
+import { intense } from "@/utils/intanseAxios";
 
 export const CreateUserThunk = createAsyncThunk(
   "create-user/admin",
-  async (form: UserForm, thunk) => {
+  async ({ form, token }: { form: UserForm; token: string }, thunk) => {
     try {
-      const body = JSON.stringify(form);
-      const response = await fetch(baseUrl + "users/create", {
-        body,
-        method: "post",
+      const response = await intense.post("users/create", form, {
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.status !== 201) {
         return thunk.rejectWithValue(false);
       }
-      const data = (await response.json()) as CreateUserResponse;
+      const data = response.data as CreateUserResponse;
       return thunk.fulfillWithValue(data.data);
     } catch (error) {
       return thunk.rejectWithValue(error);
@@ -32,17 +31,22 @@ export const CreateUserThunk = createAsyncThunk(
 
 export const GetUsersPageThunk = createAsyncThunk(
   "get-users-page/admin",
-  async ({ page, offset }: { page: number; offset: number }, thunk) => {
+  async (
+    { page, offset, token }: { page: number; offset: number; token: string },
+    thunk
+  ) => {
     try {
-      const response = await fetch(
-        baseUrl + `users/page/${page}/offset/${offset}`
-      );
+      const response = await intense(`users/page/${page}/offset/${offset}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
 
-      const data = (await response.json()) as getUserResponse;
+      const data = response.data as getUserResponse;
 
       return thunk.fulfillWithValue(data.data);
     } catch (error) {
@@ -53,15 +57,55 @@ export const GetUsersPageThunk = createAsyncThunk(
 
 export const deleteUsersThunk = createAsyncThunk(
   "delete-user/admin",
-  async (id: string, thunk) => {
+  async ({ id, token }: { id: string; token: string }, thunk) => {
     try {
-      const response = await fetch(baseUrl + "users/delete/" + id, {
-        method: "delete",
+      const response = await intense.delete("users/delete/" + id, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.status !== 200) {
         return thunk.rejectWithValue(false);
       }
       return thunk.fulfillWithValue(id);
+    } catch (error) {
+      return thunk.rejectWithValue(error);
+    }
+  }
+);
+
+export const logInUserThunk = createAsyncThunk(
+  "login-user/admin",
+  async ({ password, email }: { password: string; email: string }, thunk) => {
+    try {
+      const response = await intense.post("login/create", { password, email });
+
+      if (response.status !== 200) {
+        return thunk.rejectWithValue(false);
+      }
+
+      const token = response.data as ResponseDataLogin;
+
+      return thunk.fulfillWithValue(token.data.token);
+    } catch (error) {
+      return thunk.rejectWithValue(error);
+    }
+  }
+);
+
+export const validTokenThunk = createAsyncThunk(
+  "valid-token-thunk",
+  async (token: string, thunk) => {
+    try {
+      const response = await intense.post("login/valid", {
+        token,
+      });
+
+      if (response.status !== 200) {
+        return thunk.rejectWithValue(false);
+      }
+
+      return thunk.fulfillWithValue(true);
     } catch (error) {
       return thunk.rejectWithValue(error);
     }

@@ -21,6 +21,7 @@ import { lessCustom } from "@/store/slice/products/products";
 
 export const TableProductsSelectOrder = () => {
   const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.users.token);
   const products = useAppSelector((state) => state.products.list);
   const [productSelected, setProductSelected] = useState<ProductItemList>({
     id: "",
@@ -77,7 +78,7 @@ export const TableProductsSelectOrder = () => {
   ) => setSearch(event.target.value);
   const handlerFindLikeName = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(getProductsLikeThunk(search));
+    dispatch(getProductsLikeThunk({ token, name: search }));
   };
 
   const columns = useMemo<GridColDef<ProductItemList>[]>(
@@ -101,7 +102,7 @@ export const TableProductsSelectOrder = () => {
     [handlerModalActive]
   );
   useEffect(() => {
-    dispatch(getProductsThunk({ offset: 20, page: 0 }));
+    dispatch(getProductsThunk({ offset: 20, page: 0, token }));
   }, []);
   return (
     <div className="flex flex-col gap-4 px-4">

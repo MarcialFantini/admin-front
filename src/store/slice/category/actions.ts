@@ -1,22 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { baseUrl } from "../../../../vars/baseUrl";
-import {
-  CategoriesResponseInterface,
-  CategoryUpdate,
-} from "../../../../interfaces/categoryInterfaces";
+
+import { CategoriesResponseInterface } from "../../../../interfaces/categoryInterfaces";
+import { intense } from "@/utils/intanseAxios";
 
 export const createCategory = createAsyncThunk(
   "create-category/admin",
-  async (name: string, thunkApi) => {
+  async ({ name, token }: { name: string; token: string }, thunkApi) => {
     try {
-      const body = JSON.stringify({ name });
-      const response = await fetch(baseUrl + "category/create", {
-        method: "POST",
-        body,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await intense.post(
+        "category/create",
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log(response);
       if (response.status !== 201) {
@@ -32,16 +31,19 @@ export const createCategory = createAsyncThunk(
 
 export const getCategory = createAsyncThunk(
   "get-category/admin",
-  async (name: string, thunkApi) => {
+  async (token: string, thunkApi) => {
     try {
-      const response = await fetch(baseUrl + "category/row");
+      const response = await intense("category/row", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status !== 200) {
         return thunkApi.rejectWithValue(false);
       }
 
-      const data =
-        (await response.json()) as unknown as CategoriesResponseInterface;
+      const data = response.data as CategoriesResponseInterface;
 
       return data.data || [];
     } catch (error) {
@@ -52,10 +54,12 @@ export const getCategory = createAsyncThunk(
 
 export const deletedCategory = createAsyncThunk(
   "delete-category/admin",
-  async (id: string, thunkApi) => {
+  async ({ id, token }: { id: string; token: string }, thunkApi) => {
     try {
-      const responseDeleted = await fetch(baseUrl + "category/delete/" + id, {
-        method: "DELETE",
+      const responseDeleted = await intense.delete("category/delete/" + id, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (responseDeleted.status !== 200) {

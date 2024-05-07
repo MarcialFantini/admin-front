@@ -25,6 +25,7 @@ export default function CreateProductPage() {
     place_id: "",
     price: 0,
   });
+  const token = useAppSelector((state) => state.users.token);
   const dispatch = useAppDispatch();
   const categories = useAppSelector((state) => state.categories.categories);
   const places = useAppSelector((state) => state.place.list);
@@ -40,7 +41,7 @@ export default function CreateProductPage() {
 
   const handlerCreate = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(createProductThunk(form));
+    dispatch(createProductThunk({ product: form, token }));
   };
 
   useEffect(() => {

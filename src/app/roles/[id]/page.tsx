@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 export default function ViewRolePage(params: { params: { id: string } }) {
   const sections = useAppSelector((item) => item.roles.sections);
   const sectionsCategory = useAppSelector((item) => item.roles.sectionsByRole);
+  const token = useAppSelector((state) => state.users.token);
 
   const [sectionSelected, setSectionSelected] = useState("");
   const [sectionsFilters, setSectionsFilter] = useState<string[]>([]);
@@ -29,15 +30,18 @@ export default function ViewRolePage(params: { params: { id: string } }) {
   const handlerCreateRoleSection = () => {
     dispatch(
       createSectionRole({
-        role_id: params.params.id,
-        section: sectionSelected,
+        roleSectionCreate: {
+          role_id: params.params.id,
+          section: sectionSelected,
+        },
+        token,
       })
     );
   };
 
   useEffect(() => {
-    dispatch(getAllSections());
-    dispatch(getAllSectionsOffRole(params.params.id));
+    dispatch(getAllSections(token));
+    dispatch(getAllSectionsOffRole({ token, idRole: params.params.id }));
   }, []);
 
   useEffect(() => {

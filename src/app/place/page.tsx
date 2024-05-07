@@ -15,9 +15,10 @@ import { deletePlaceThunk, getPlaceThunk } from "@/store/slice/place/actions";
 
 export default function PlacePage() {
   const list = useAppSelector((state) => state.place.list);
+  const token = useAppSelector((state) => state.users.token);
   const dispatch = useAppDispatch();
   const handlerDeleted = (id: string) => () => {
-    dispatch(deletePlaceThunk(id));
+    dispatch(deletePlaceThunk({ id, token }));
   };
   const column = useMemo<GridColDef<PlaceItemInterface>[]>(
     () => [
@@ -43,7 +44,7 @@ export default function PlacePage() {
   );
 
   useEffect(() => {
-    dispatch(getPlaceThunk(""));
+    dispatch(getPlaceThunk(token));
   }, []);
 
   return (

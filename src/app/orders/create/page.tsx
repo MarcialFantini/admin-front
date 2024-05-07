@@ -17,10 +17,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { deleteOrder, reset } from "@/store/slice/orders/orders";
 import { createOrderThunk } from "@/store/slice/orders/actions";
-import {
-  normalIdUser,
-  OrdersCar,
-} from "../../../../interfaces/ordersInterface";
+import { normalIdUser } from "../../../../interfaces/ordersInterface";
 import { useEffect, useState } from "react";
 import { getPlaceThunk } from "@/store/slice/place/actions";
 export default function CreateOrderPage() {
@@ -31,17 +28,16 @@ export default function CreateOrderPage() {
   const deleteOrderNew = (id: string) => () => {
     dispatch(deleteOrder(id));
   };
-
+  const token = useAppSelector((item) => item.users.token);
   const createOrder = () => {
-    const ordersDeatailToCreate: OrdersCar[] = resume.map((item) => {
-      return { product_id: item.product_id, amount: item.amount };
-    });
     console.log(normalIdUser);
     dispatch(
       createOrderThunk({
-        idUser: normalIdUser,
-        orders: ordersDeatailToCreate,
-        place_id: placeSelected,
+        token: token,
+        body: {
+          orders: resume,
+          place_id: placeSelected,
+        },
       })
     );
 
@@ -49,7 +45,7 @@ export default function CreateOrderPage() {
   };
 
   useEffect(() => {
-    dispatch(getPlaceThunk(""));
+    dispatch(getPlaceThunk(token));
   }, []);
 
   return (
