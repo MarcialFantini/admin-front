@@ -10,6 +10,7 @@ import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import { Operation } from "../../../interfaces/operationInterfaces";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { getPlaceThunk } from "@/store/slice/place/actions";
 export default function OperationsPage() {
   const [isCreate, setIsCreate] = useState(false);
   const [name, setName] = useState("");
@@ -54,6 +55,7 @@ export default function OperationsPage() {
 
   useEffect(() => {
     dispatch(getOperations(token));
+    dispatch(getPlaceThunk(token));
   }, []);
 
   return (
