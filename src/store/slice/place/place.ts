@@ -16,7 +16,7 @@ export const placeSlice = createSlice({
       state.list = action.payload;
     });
     builder.addCase(deletePlaceThunk.fulfilled, (state, action) => {
-      state.list = state.list.filter((item) => item.id !== action.meta.arg);
+      state.list = state.list.filter((item) => item.id !== action.meta.arg.id);
     });
   },
 });

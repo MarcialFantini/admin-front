@@ -10,12 +10,13 @@ import { useEffect } from "react";
 
 export const RolesAdmin = (props: { id: string }) => {
   const sections = useAppSelector((state) => state.roles.sectionsByRole);
+  const token = useAppSelector((state) => state.users.token);
   const dispatch = useAppDispatch();
   const handlerDelete = (idRole: string) => () => {
-    dispatch(deleteSectionsOffRole(idRole));
+    dispatch(deleteSectionsOffRole({ idRole, token }));
   };
   useEffect(() => {
-    dispatch(getAllSectionsOffRole(props.id));
+    dispatch(getAllSectionsOffRole({ idRole: props.id, token }));
   }, [dispatch]);
   return (
     <Box sx={{ width: "100%", bgcolor: "background.paper" }}>

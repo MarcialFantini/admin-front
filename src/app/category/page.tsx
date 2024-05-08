@@ -16,8 +16,10 @@ export default function CategoryPage() {
   const [isModalActive, setIsModelActive] = useState(true);
   const dispatch = useAppDispatch();
   const categories = useAppSelector((state) => state.categories.categories);
+  const token = useAppSelector((state) => state.users.token);
 
-  const handlerDelete = (id: string) => () => dispatch(deletedCategory(id));
+  const handlerDelete = (id: string) => () =>
+    dispatch(deletedCategory({ id, token }));
 
   const handleModal = () => setIsModelActive(!isModalActive);
 
@@ -47,7 +49,7 @@ export default function CategoryPage() {
   );
 
   useEffect(() => {
-    dispatch(getCategory(""));
+    dispatch(getCategory(token));
   }, []);
 
   return (

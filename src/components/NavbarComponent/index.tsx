@@ -12,6 +12,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import Link from "next/link";
+import { useAppSelector } from "@/store/hooks";
 
 const listLink: { name: string; link: string }[] = [
   { name: "Home", link: "/" },
@@ -27,7 +28,7 @@ const listLink: { name: string; link: string }[] = [
 
 export const NavbarComponent = () => {
   const [open, setOpen] = useState(false);
-
+  const isUserLogin = useAppSelector((state) => state.users.isLogin);
   const handlerToggleOpen = () => setOpen(!open);
 
   return (
@@ -35,6 +36,7 @@ export const NavbarComponent = () => {
       <AppBar position="fixed">
         <Toolbar>
           <IconButton
+            style={{ display: isUserLogin ? "flex" : "none" }}
             onClick={handlerToggleOpen}
             onKeyDown={() => setOpen(false)}
             size="large"
@@ -45,6 +47,7 @@ export const NavbarComponent = () => {
           >
             <MenuIcon />
           </IconButton>
+
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             News
           </Typography>
