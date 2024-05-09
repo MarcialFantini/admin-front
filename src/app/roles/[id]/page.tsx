@@ -22,7 +22,12 @@ export default function ViewRolePage(params: { params: { id: string } }) {
   const token = useAppSelector((state) => state.users.token);
 
   const [sectionSelected, setSectionSelected] = useState("");
-  const [sectionsFilters, setSectionsFilter] = useState<string[]>([]);
+  const [sectionsFilters, setSectionsFilter] = useState<
+    {
+      id: string;
+      section: string;
+    }[]
+  >([]);
   const dispatch = useAppDispatch();
   const handlerSection = (event: SelectChangeEvent) =>
     setSectionSelected(event.target.value);
@@ -49,7 +54,7 @@ export default function ViewRolePage(params: { params: { id: string } }) {
       const sectionsRole = sectionsCategory.map(
         (sectionRole) => sectionRole.section
       );
-      return !sectionsRole.includes(item);
+      return !sectionsRole.includes(item.section);
     });
     setSectionsFilter(newArr);
   }, [sectionsCategory, sections]);
@@ -66,7 +71,7 @@ export default function ViewRolePage(params: { params: { id: string } }) {
             label="Sections"
           >
             {sectionsFilters.map((item) => {
-              return <MenuItem value={item}>{item}</MenuItem>;
+              return <MenuItem value={item.id}>{item.section}</MenuItem>;
             })}
           </Select>
         </FormControl>

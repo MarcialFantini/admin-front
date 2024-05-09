@@ -17,7 +17,7 @@ export interface GetRolesResponse {
 
 export interface RolesStateReducer {
   list: RoleItemInterface[];
-  sections: string[];
+  sections: { id: string; section: string }[];
   sectionsByRole: sectionsOfRole[];
 }
 
