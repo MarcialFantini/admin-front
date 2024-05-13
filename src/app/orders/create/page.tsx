@@ -17,7 +17,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import { deleteOrder, reset } from "@/store/slice/orders/orders";
 import { createOrderThunk } from "@/store/slice/orders/actions";
-import { normalIdUser } from "../../../../interfaces/ordersInterface";
+
 import { useEffect, useState } from "react";
 import { getPlaceThunk } from "@/store/slice/place/actions";
 export default function CreateOrderPage() {
@@ -30,7 +30,6 @@ export default function CreateOrderPage() {
   };
   const token = useAppSelector((item) => item.users.token);
   const createOrder = () => {
-    console.log(normalIdUser);
     dispatch(
       createOrderThunk({
         token: token,

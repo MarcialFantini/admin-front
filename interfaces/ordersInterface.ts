@@ -26,6 +26,7 @@ export interface InitialStateOrderInterface {
   list: OrdersInterface[];
   newOrder: OrdersCarName[];
   orderSelected: OrderAndDetail;
+  ordersHome: OrderHome[];
 }
 
 export interface CreateOrderThunkReques {
@@ -69,4 +70,14 @@ export interface OrderDetail {
   price: number;
 }
 
-export const normalIdUser = "472015e7-e97e-41b8-a40f-3549ad2896d4";
+export interface ResponseOrderHome {
+  data: OrderHome[];
+  message: string;
+  code: number;
+}
+
+export interface OrderHome {
+  id: string;
+  name_user: string;
+  name_place: string;
+}

@@ -13,18 +13,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import Link from "next/link";
 import { useAppSelector } from "@/store/hooks";
-
-const listLink: { name: string; link: string }[] = [
-  { name: "Home", link: "/" },
-  { name: "Products", link: "/products" },
-  { name: "Category", link: "/category" },
-  { name: "Places", link: "/place" },
-  { name: "Roles", link: "/roles" },
-  { name: "Users", link: "/users" },
-  { name: "Orders", link: "/orders" },
-  { name: "Operation", link: "/operation" },
-  // { name: "Moviments", link: "/moviments" },
-];
+import { listLink } from "../../../vars/links";
 
 export const NavbarComponent = () => {
   const [open, setOpen] = useState(false);
@@ -51,10 +40,12 @@ export const NavbarComponent = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Admin
           </Typography>
-          <Link href={"/login"}>
-            {" "}
-            <Button color="inherit">Login</Button>
-          </Link>
+          {isUserLogin || (
+            <Link href={"/login"}>
+              {" "}
+              <Button color="inherit">Login</Button>
+            </Link>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer onClick={handlerToggleOpen} open={open} anchor="left">

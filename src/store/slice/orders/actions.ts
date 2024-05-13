@@ -3,6 +3,7 @@ import {
   CreateOrderThunkReques,
   GetOrderResponseDetails,
   GetOrdersThunkResponse,
+  ResponseOrderHome,
 } from "../../../../interfaces/ordersInterface";
 
 import { intense } from "@/utils/intanseAxios";
@@ -129,6 +130,25 @@ export const deleteOrderThunk = createAsyncThunk(
       return thunk.fulfillWithValue(id);
     } catch (error) {
       return thunk.rejectWithValue(error);
+    }
+  }
+);
+
+export const OrdersHomeThunk = createAsyncThunk(
+  "set-orders-home/admin",
+  async (token: string, thunkApi) => {
+    try {
+      const response = await intense<ResponseOrderHome>("/orders/row/last", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status !== 200) {
+        return thunkApi.rejectWithValue(false);
+      }
+
+      return thunkApi.fulfillWithValue(response.data.data);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
     }
   }
 );

@@ -12,6 +12,7 @@ export interface CategoriesInterface {
 export interface initialStateCategory {
   categories: CategoriesInterface[];
   status: status;
+  CategoriesHome: CategoriesHome[];
 }
 
 export interface CategoriesResponseInterface {
@@ -27,4 +28,16 @@ export interface CategoriesColumns {
 
 export interface CategoryUpdate {
   name: string;
+}
+
+export interface CategoriesHomeResponse {
+  data: CategoriesHome[];
+  message: string;
+  code: number;
+}
+
+export interface CategoriesHome {
+  id: string;
+  category: string;
+  total_products: number;
 }

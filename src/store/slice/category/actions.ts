@@ -1,6 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import { CategoriesResponseInterface } from "../../../../interfaces/categoryInterfaces";
+import {
+  CategoriesHomeResponse,
+  CategoriesResponseInterface,
+} from "../../../../interfaces/categoryInterfaces";
 import { intense } from "@/utils/intanseAxios";
 
 export const createCategory = createAsyncThunk(
@@ -69,6 +72,30 @@ export const deletedCategory = createAsyncThunk(
       return thunkApi.fulfillWithValue(id);
     } catch (error) {
       return thunkApi.rejectWithValue(false);
+    }
+  }
+);
+
+export const getCategoriesHome = createAsyncThunk(
+  "get-categories-home",
+  async (token: string, thunkApi) => {
+    try {
+      const responseCategories = await intense<CategoriesHomeResponse>(
+        "/category/count/products",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (responseCategories.status !== 200) {
+        return thunkApi.rejectWithValue(false);
+      }
+
+      return thunkApi.fulfillWithValue(responseCategories.data.data);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
     }
   }
 );

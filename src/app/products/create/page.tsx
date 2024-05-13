@@ -14,6 +14,7 @@ import { ProductFormInterface } from "../../../../interfaces/productInterfaces";
 import { createProductThunk } from "@/store/slice/products/actions";
 import { getCategory } from "@/store/slice/category/actions";
 import { getPlaceThunk } from "@/store/slice/place/actions";
+import { useRouter } from "next/navigation";
 
 export default function CreateProductPage() {
   const [form, setForm] = useState<ProductFormInterface>({
@@ -32,7 +33,7 @@ export default function CreateProductPage() {
   const handlerSelect = (event: SelectChangeEvent) => {
     setForm({ ...form, [event.target.name]: event.target.value });
   };
-
+  const router = useRouter();
   const handlerChangeForm = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -42,11 +43,12 @@ export default function CreateProductPage() {
   const handlerCreate = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(createProductThunk({ product: form, token }));
+    router.push("/products");
   };
 
   useEffect(() => {
-    dispatch(getCategory(""));
-    dispatch(getPlaceThunk(""));
+    dispatch(getCategory(token));
+    dispatch(getPlaceThunk(token));
   }, []);
 
   return (
